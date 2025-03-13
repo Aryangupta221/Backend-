@@ -25,11 +25,11 @@ const uploadOnCloudinary = async(localFilePath)=>{
         
     } catch (error) {
         fs.unlinkSync(localFilePath)// remove the locally saved temporary file as upload openration got failed
-        
+
         return null;
         
     }
 }
 
 
-cloudinary.v2.uploader.upload 
+export {uploadOnCloudinary}
