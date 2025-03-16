@@ -5,6 +5,8 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import jwt from "jsonwebtoken"
+import mongoose from "mongoose";
+
 //5 
 const generateAccessAndRefreshTokens = async(userId)=>{
     try {
@@ -143,8 +145,8 @@ const logoutUser  = asyncHandler(async(req,res)=>{
     await User.findByIdAndUpdate(
         req.user._id,
         {
-            $set:{
-                refreshToken: undefined
+            $unset:{
+                refreshToken: 1
             }
         },
         {
@@ -221,7 +223,7 @@ const changeCurrentPassword = asyncHandler(async(req,res)=>{
 const getCurrentUser = asyncHandler(async(req, res) => {
         return res
         .status(200)
-        .json(new ApiResponse(
+        .json(new apiResponse(
             200,
             req.user,
             "User fetched successfully"
@@ -231,7 +233,7 @@ const getCurrentUser = asyncHandler(async(req, res) => {
         const {fullName, email} = req.body
     
         if (!fullName || !email) {
-            throw new ApiError(400, "All fields are required")
+            throw new apiError(400, "All fields are required")
         }
     
         const user = await User.findByIdAndUpdate(
@@ -248,7 +250,7 @@ const getCurrentUser = asyncHandler(async(req, res) => {
     
         return res
         .status(200)
-        .json(new ApiResponse(200, user, "Account details updated successfully"))
+        .json(new apiResponse(200, user, "Account details updated successfully"))
 })
 const updateUserAvatar = asyncHandler(async(req, res) => {
         const avatarLocalPath = req.file?.path
@@ -279,7 +281,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
         return res
         .status(200)
         .json(
-            new ApiResponse(200, user, "Avatar image updated successfully")
+            new apiResponse(200, user, "Avatar image updated successfully")
         )
 })
 const updateUserCoverImage = asyncHandler(async(req,res)=>{
@@ -304,7 +306,7 @@ const updateUserCoverImage = asyncHandler(async(req,res)=>{
         return res
         .status(200)
         .json(
-            new ApiResponse(200, user, "Cover image updated successfully")
+            new apiResponse(200, user, "Cover image updated successfully")
         )
 
 })
@@ -424,7 +426,7 @@ const getWatchHistory = asyncHandler(async(req, res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(
+        new apiResponse(
             200,
             user[0].watchHistory,
             "Watch history fetched successfully"
